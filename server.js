@@ -5,6 +5,7 @@ const connectDB = require("./config/db");
 
 // Import routers
 const bootcamps = require("./routes/bootcamp");
+const errorHandler = require("./middlewares/error");
 
 // Load env variables
 dotenv.config({ path: "./config/config.env" });
@@ -21,6 +22,9 @@ app.use(express.json())
 
 // Routes
 app.use("/api/v1/bootcamps", bootcamps);
+
+// error handler middleware
+app.use(errorHandler)
 
 connectDB()
 
