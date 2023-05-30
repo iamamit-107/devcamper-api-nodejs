@@ -5,6 +5,7 @@ const connectDB = require("./config/db");
 
 // Import routers
 const bootcamps = require("./routes/bootcamp");
+const courses = require("./routes/course")
 const errorHandler = require("./middlewares/error");
 
 // Load env variables
@@ -22,6 +23,7 @@ app.use(express.json())
 
 // Routes
 app.use("/api/v1/bootcamps", bootcamps);
+app.use("/api/v1/courses", courses);
 
 // error handler middleware
 app.use(errorHandler)
