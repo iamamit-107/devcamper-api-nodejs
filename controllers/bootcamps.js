@@ -6,10 +6,30 @@ const ErrorResponse = require("../utils/ErrorResponse");
 // @route GET /api/v1/bootcamps
 // @access Public
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
-    let query = JSON.stringify(req.query);
-    query = query.replace(/\b(gt|gte|lte|lt)/g, match => `$${match}`)
+    let query = {...req.query};
 
-    const bootcamps = await Bootcamp.find(JSON.parse(query));
+    // fields to exclude
+    const removeFields = ["select", "sort"];
+    removeFields.map(field => delete query[field])
+
+    let queryStr = JSON.stringify(query);
+    queryStr = queryStr.replace(/\b(gt|gte|lte|lt)/g, match => `$${match}`);
+
+    let finalQuery = Bootcamp.find(JSON.parse(queryStr));
+
+    if(req.query.select){
+      const fields = req.query.select.split(",").join(" ");
+      finalQuery.select(fields);
+    }
+
+    if(req.query.sort){
+      const sortBy = req.query.sort.split(",").join(" ");
+      finalQuery.sort(sortBy);
+    }else{
+      finalQuery.sort("-createdAt");
+    }
+    
+    const bootcamps = await finalQuery;
 
     res
       .status(200)
