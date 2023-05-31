@@ -46,7 +46,7 @@ exports.getCourse = asyncHandler(async (req, res, next) => {
 
 // @desc add a course
 // @route GET /api/v1/bootcamp/:bootcampId/courses
-// @access Public
+// @access Private
 exports.addCourse = asyncHandler(async (req, res, next) => {
     const bootcamp = await Bootcamp.findById(req.params.bootcampId);
   
@@ -59,5 +59,43 @@ exports.addCourse = asyncHandler(async (req, res, next) => {
     res.status(200).json({
       success: true,
       data: course,
+    });
+  });
+
+// @desc update a course
+// @route GET /api/v1/courses/:id
+// @access Private
+exports.updateCourse = asyncHandler(async (req, res, next) => {
+    const course = await Course.findById(req.params.id);
+
+  if (!course) {
+    return next(new ErrorResponse("Course not found!", 400));
+  }
+
+    const updatedCourse = await Course.findByIdAndUpdate(req.params.id, req.body, {
+        new:true,
+    })
+  
+    res.status(200).json({
+      success: true,
+      data: updatedCourse,
+    });
+  });
+
+// @desc delete a course
+// @route GET /api/v1/courses/:id
+// @access Private
+exports.deleteCourse = asyncHandler(async (req, res, next) => {
+    const course = await Course.findById(req.params.id);
+
+  if (!course) {
+    return next(new ErrorResponse("Course not found!", 400));
+  }
+
+    await Course.findByIdAndRemove(req.params.id)
+  
+    res.status(200).json({
+      success: true,
+      data: {},
     });
   });
